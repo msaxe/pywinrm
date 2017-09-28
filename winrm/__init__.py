@@ -36,7 +36,9 @@ class Session(object):
         # TODO optimize perf. Do not call open/close shell every time
         shell_id = self.protocol.open_shell()
         command_id = self.protocol.run_command(shell_id, command, args)
-        rs = Response(self.protocol.get_command_output(shell_id, command_id, wait))
+        if not wait:
+            return Response(('Did not wait for response','',0))
+        rs = Response(self.protocol.get_command_output(shell_id, command_id))
         self.protocol.cleanup_command(shell_id, command_id)
         self.protocol.close_shell(shell_id)
         return rs
